@@ -112,7 +112,9 @@ void espDDNS::ddnsUpdate() {
 
     Serial.print("Connecting to Server... ");
     client.setInsecure();
+#ifdef ESP8266
     client.connect(_ddns_server, 443);
+#endif
 
     // Your Domain name with URL path or IP address with path
     Serial.println("Updating IP");
