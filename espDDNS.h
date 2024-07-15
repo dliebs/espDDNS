@@ -1,6 +1,6 @@
 //
-// espDDNS v1.0.1
-// 2023.01.16
+// espDDNS v1.0.2
+// 2024.01.22
 //
 
 #ifndef espDDNS_h
@@ -25,7 +25,7 @@
 class espDDNS {
   public:
     espDDNS(String, String, String, String, int);
-    void update();
+    void updateRoutine();
     void performUpdate();
   private:
     // Porkbun API Variables

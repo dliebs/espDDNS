@@ -1,6 +1,19 @@
 //
-// espDDNS v1.0.0
-// 2023.12.13
+// espDDNS - PorkBun Dynamic DNS Updater v1.0.2
+// 2024.01.22
+//
+// Checks for current IP from https://domains.google.com/checkip
+// Makes an HTTPS API Request https://porkbun.com/api/json/v3/documentation#DNS%20Edit%20Record%20by%20Domain%20and%20ID
+// Based on https://github.com/ayushsharma82/EasyDDNS
+// Added support for HTTPS https://arduino-esp8266.readthedocs.io/en/2.4.0/esp8266wifi/client-secure-examples.html
+// Also thanks to https://randomnerdtutorials.com/esp8266-nodemcu-http-get-post-arduino/
+//
+// Future Plans:
+//   - Add other DDNS services
+//   - HTTPS Server Verification (Oops kinda skipped that... Do I need to check the server identity for it to work? No. Should I? I guessssss)
+//
+// Changes from 1.0.1
+//  update -> updateRoutine
 //
 
 /*----------  Libraries  ----------*/
@@ -30,7 +43,7 @@ void setup() {
 }
 
 void loop() {
-  ddnsHost.update();
+  ddnsHost.updateRoutine();
   delay(1000);
 }
 
