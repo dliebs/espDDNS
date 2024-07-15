@@ -1,36 +1,45 @@
 //
-// espDDNS - PorkBun Dynamic DNS Updater v1.0.2
-// 2024.01.22
 //
-// Checks for current IP from https://domains.google.com/checkip
-// Makes an HTTPS API Request https://porkbun.com/api/json/v3/documentation#DNS%20Edit%20Record%20by%20Domain%20and%20ID
-// Based on https://github.com/ayushsharma82/EasyDDNS
-// Added support for HTTPS https://arduino-esp8266.readthedocs.io/en/2.4.0/esp8266wifi/client-secure-examples.html
-// Also thanks to https://randomnerdtutorials.com/esp8266-nodemcu-http-get-post-arduino/
+//  espDDNS - PorkBun Dynamic DNS Updater v1.0.4
+//  This version was not deployed [2024.01.22]
 //
-// Future Plans:
-//   - Add other DDNS services
-//   - HTTPS Server Verification (Oops kinda skipped that... Do I need to check the server identity for it to work? No. Should I? I guessssss)
+//  ESP8266/32 Based
+//    Checks for current IP from https://domains.google.com/checkip
+//    Makes an HTTPS API Request https://porkbun.com/api/json/v3/documentation#DNS%20Edit%20Record%20by%20Domain%20and%20ID
+//    Based on https://github.com/ayushsharma82/EasyDDNS
+//    Added support for HTTPS https://arduino-esp8266.readthedocs.io/en/2.4.0/esp8266wifi/client-secure-examples.html
+//    Also thanks to https://randomnerdtutorials.com/esp8266-nodemcu-http-get-post-arduino/
 //
-// Changes from 1.0.1
-//  update -> updateRoutine
+//  Changes From Previous Version
+//    Comments, cleanup
+//    update -> updateRoutine
+//
+//  To Do
+//    Add other DDNS services
+//    HTTPS Server Verification (Oops kinda skipped that... Do I need to check the server identity for it to work? No. Should I? I guessssss)
+//
 //
 
 #include "espDDNS.h"
 
+// Instanciate DDNS updater, ddns_updateInterval in minutes
 espDDNS::espDDNS(String ddns_subdomain, String ddns_domain, String ddns_apikey, String ddns_secretapikey, int ddns_updateInterval) {
+  // These variables need to be stored for the JSON POST later
   _ddns_subdomain = ddns_subdomain;
   _ddns_domain = ddns_domain;
   _ddns_apikey = ddns_apikey;
   _ddns_secretapikey = ddns_secretapikey;
 
+  // We store these for convienence later
   _ddns_update_url = "https://" + _ddns_server + "/api/json/v3/dns/editByNameType/" + _ddns_domain + "/A/" + _ddns_subdomain;
   _ddns_fullDomain = _ddns_subdomain + "." + _ddns_domain;
 
+  // _ddns_updateInterval is only used for user output
   _ddns_updateInterval = ddns_updateInterval;
   _ddns_interval_millis = 1000 * 60 * _ddns_updateInterval;
 }
 
+// DDNS Update routine, run every loop
 void espDDNS::updateRoutine() {
   if ( _ddns_lastUpdateTime + _ddns_interval_millis < millis() ) {
     performUpdate();
@@ -40,6 +49,7 @@ void espDDNS::updateRoutine() {
   }
 }
 
+// Update DDNS, run once during setup and then updateRoutine manages interval in loop
 void espDDNS::performUpdate() {
   // Check WiFi connection status
   if (WiFi.status() == WL_CONNECTED) {
@@ -69,7 +79,7 @@ void espDDNS::readDDNSIP() {
   }
 }
 
-// Reads the current IP address from Googles resolver and compares it to _ddns_ip
+// Reads the current external IP address from Googles resolver and compares it to _ddns_ip
 // If it does not match, writes the new IP to _ddns_ip and sets _ddns_needsUpdate to true
 void espDDNS::getNewIP() {
   Serial.print("Retrieving external IP from Google: ");
